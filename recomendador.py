@@ -6,7 +6,7 @@ class RecomendadorAgares(KnowledgeEngine):
 
     def _preguntar_y_declarar(self, pregunta, lista, factClass):
         print(f'\n{pregunta}')
-        print('Escribir todo lo que coincida, separado por comas, ENTER para ninguno')
+        print('Escribir todo lo que coincida, separado por comas, o presiona ENTER si no estás seguro o ninguno coincide')
         for idx, item in enumerate(lista):
             print(f'\t{idx}: {item}')
 
