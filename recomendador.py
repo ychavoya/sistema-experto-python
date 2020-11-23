@@ -133,7 +133,22 @@ class RecomendadorAgares(KnowledgeEngine):
     # ======================================
 
     @Rule(
-        Recomendacion(MATCH.recomendacion),
+        AND(
+            Recomendacion(MATCH.recomendacion),
+            OR(
+                AND(
+                    Procedimiento('Aislamiento'),
+                    Preguntado(Medio),
+                    Preguntado(Inhibe),
+                    Preguntado(Aisla),
+                    Preguntado(Enfermedad),
+                ),
+                AND(
+                    Procedimiento('Prueba diferencial'),
+                    Preguntado(Medio),
+                )
+            )
+        ),
         salience=100
     )
     def recomendamos(self, recomendacion):
