@@ -8,7 +8,7 @@ class Inhibe(Fact):
     ]
 
 
-class Estimula(Fact):
+class Aisla(Fact):
     list = [
         'Gram-',
         'Neisseria gonorrhoeae',
@@ -25,6 +25,20 @@ class Enfermedad(Fact):
         'Peste',
         'Meningitis',
         'Gonorrea',
+    ]
+
+
+class Medio(Fact):
+    list = [
+        'Caldo',
+        'Agar',
+    ]
+
+
+class Procedimiento(Fact):
+    list = [
+        'Aislamiento',
+        'Prueba diferencial',
     ]
 
 

@@ -1,5 +1,5 @@
 from experta import KnowledgeEngine, Rule, AND, OR, NOT, MATCH
-from facts import Inhibe, Estimula, Enfermedad, Recomendacion, Preguntado
+from facts import Inhibe, Aisla, Enfermedad, Medio, Procedimiento, Recomendacion, Preguntado
 
 
 class RecomendadorAgares(KnowledgeEngine):
@@ -30,6 +30,27 @@ class RecomendadorAgares(KnowledgeEngine):
 
     @Rule(
         AND(
+            NOT(Preguntado(Procedimiento)),
+            NOT(Recomendacion()),
+        ),
+        salience=30
+    )
+    def preguntar_procedimiento(self):
+        self._preguntar_y_declarar('¿Qué procedimiento desea realizar?', Procedimiento.list, Procedimiento)
+
+    @Rule(
+        AND(
+            NOT(Preguntado(Medio)),
+            NOT(Recomendacion()),
+        ),
+        salience=20
+    )
+    def preguntar_medio(self):
+        self._preguntar_y_declarar('¿Qué medio desea utilizar?', Medio.list, Medio)
+
+    @Rule(
+        AND(
+            Procedimiento('Aislamiento'),
             NOT(Preguntado(Inhibe)),
             NOT(Recomendacion()),
         )
@@ -39,15 +60,17 @@ class RecomendadorAgares(KnowledgeEngine):
 
     @Rule(
         AND(
-            NOT(Preguntado(Estimula)),
+            Procedimiento('Aislamiento'),
+            NOT(Preguntado(Aisla)),
             NOT(Recomendacion()),
         )
     )
     def preguntar_estimula(self):
-        self._preguntar_y_declarar('¿Qué desea estimular?', Estimula.list, Estimula)
+        self._preguntar_y_declarar('¿Qué desea aislar?', Aisla.list, Aisla)
 
     @Rule(
         AND(
+            Procedimiento('Aislamiento'),
             NOT(Preguntado(Enfermedad)),
             NOT(Recomendacion()),
         )
@@ -55,14 +78,28 @@ class RecomendadorAgares(KnowledgeEngine):
     def preguntar_enfermedad(self):
         self._preguntar_y_declarar('¿Qué enfermedad(es) desea estudiar?', Enfermedad.list, Enfermedad)
 
+
+    # ======================================
+    # Descartar opciones
+    # ======================================
+
+    
+
     # ======================================
     # Recomendaciones
     # ======================================
 
     @Rule(
         AND(
-            Inhibe('Gram+'),
-            Estimula('Gram-'),
+            Medio('Agar'),
+            OR(
+                Inhibe('Gram+'),
+                NOT(Inhibe()),
+            ),
+            OR(
+                Aisla('Gram-'),
+                NOT(Aisla()),
+            ),
             OR(
                 Enfermedad('Infección'),
                 Enfermedad('Peritonitis'),
@@ -77,9 +114,10 @@ class RecomendadorAgares(KnowledgeEngine):
 
     @Rule(
         AND(
+            Medio('Agar'),
             OR(
-                Estimula('Neisseria gonorrhoeae'),
-                Estimula('Neisseria meningitidis'),
+                Aisla('Neisseria gonorrhoeae'),
+                Aisla('Neisseria meningitidis'),
             ),
             OR(
                 Enfermedad('Gonorrea'),
@@ -96,7 +134,7 @@ class RecomendadorAgares(KnowledgeEngine):
 
     @Rule(
         Recomendacion(MATCH.recomendacion),
-        salience=1
+        salience=100
     )
     def recomendamos(self, recomendacion):
         print('======================================')
@@ -106,12 +144,9 @@ class RecomendadorAgares(KnowledgeEngine):
     @Rule(
         AND(
             NOT(Recomendacion()),
-            Preguntado(Inhibe),
-            Preguntado(Estimula),
-            Preguntado(Enfermedad)
         ),
-        salience=-1
+        salience=-100
     )
     def no_recomendamos(self):
         print('======================================')
-        print(f'\nNo podemos recomendar un agar específico')
+        print(f'\nNo podemos recomendar un medio específico')
