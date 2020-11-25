@@ -1,5 +1,5 @@
 from experta import KnowledgeEngine, Rule, AND, OR, NOT, MATCH
-from facts import Inhibe, Aisla, Enfermedad, Medio, Procedimiento, Recomendacion, Preguntado
+from facts import *
 
 
 class RecomendadorAgares(KnowledgeEngine):
@@ -24,6 +24,25 @@ class RecomendadorAgares(KnowledgeEngine):
 
         self.declare(Preguntado(factClass))
 
+    def _preguntar_uno_y_declarar(self, pregunta, lista, factClass):
+        print(f'\n{pregunta}')
+        print('Escribir una sola opción')
+        for idx, item in enumerate(lista):
+            print(f'\t{idx}: {item}')
+
+        while True:
+            entrada = input('> ')
+            if len(entrada) == 0:
+                break
+            try:
+                self.declare(factClass(lista[int(entrada)]))
+                break
+            except ValueError or IndexError:
+                print(f'Entrada no válida, volver a intentar')
+
+        self.declare(Preguntado(factClass))
+
+
     # ======================================
     # Declarar Facts
     # ======================================
@@ -43,7 +62,7 @@ class RecomendadorAgares(KnowledgeEngine):
             NOT(Preguntado(Medio)),
             NOT(Recomendacion()),
         ),
-        salience=20
+        salience=40
     )
     def preguntar_medio(self):
         self._preguntar_y_declarar('¿Qué medio desea utilizar?', Medio.list, Medio)
@@ -51,39 +70,37 @@ class RecomendadorAgares(KnowledgeEngine):
     @Rule(
         AND(
             Procedimiento('Aislamiento'),
-            NOT(Preguntado(Inhibe)),
+            NOT(Preguntado(Aislamiento)),
             NOT(Recomendacion()),
         )
     )
-    def preguntar_inhibe(self):
-        self._preguntar_y_declarar('¿Qué desea inhibir?', Inhibe.list, Inhibe)
+    def preguntar_aisla(self):
+        self._preguntar_y_declarar('¿Qué desea aislar?', Aislamiento.list, Aislamiento)
 
     @Rule(
         AND(
-            Procedimiento('Aislamiento'),
-            NOT(Preguntado(Aisla)),
+            Procedimiento('Prueba diferencial'),
+            NOT(Preguntado(PruebaDiferencial)),
             NOT(Recomendacion()),
         )
     )
-    def preguntar_estimula(self):
-        self._preguntar_y_declarar('¿Qué desea aislar?', Aisla.list, Aisla)
-
-    @Rule(
-        AND(
-            Procedimiento('Aislamiento'),
-            NOT(Preguntado(Enfermedad)),
-            NOT(Recomendacion()),
-        )
-    )
-    def preguntar_enfermedad(self):
-        self._preguntar_y_declarar('¿Qué enfermedad(es) desea estudiar?', Enfermedad.list, Enfermedad)
+    def preguntar_diferencial(self):
+        self._preguntar_y_declarar('¿Qué prueba(s) desea realizar?', PruebaDiferencial.list, PruebaDiferencial)
 
 
     # ======================================
     # Descartar opciones
     # ======================================
 
-    
+    @Rule(
+        AND(
+            Procedimiento('Aislamiento'),
+            Aislamiento('Salmonella'),
+            NOT(Preguntado(Salmonella)),
+        )
+    )
+    def preguntar_salmonella(self):
+        self._preguntar_uno_y_declarar('¿Qué prueba de salmonella se realizará?', Salmonella.list, Salmonella)
 
     # ======================================
     # Recomendaciones
@@ -93,20 +110,8 @@ class RecomendadorAgares(KnowledgeEngine):
         AND(
             Medio('Agar'),
             OR(
-                Inhibe('Gram+'),
-                NOT(Inhibe()),
+                Aislamiento('Gram-'),
             ),
-            OR(
-                Aisla('Gram-'),
-                NOT(Aisla()),
-            ),
-            OR(
-                Enfermedad('Infección'),
-                Enfermedad('Peritonitis'),
-                Enfermedad('Tifus'),
-                Enfermedad('Cólera'),
-                Enfermedad('Peste'),
-            )
         )
     )
     def mac_conkey(self):
@@ -116,17 +121,217 @@ class RecomendadorAgares(KnowledgeEngine):
         AND(
             Medio('Agar'),
             OR(
-                Aisla('Neisseria gonorrhoeae'),
-                Aisla('Neisseria meningitidis'),
+                Aislamiento('Neisseria gonorrhoeae y Neisseria meningitidis'),
             ),
-            OR(
-                Enfermedad('Gonorrea'),
-                Enfermedad('Meningitis'),
-            )
         )
     )
     def chocolate(self):
         self.declare(Recomendacion('Agar chocolate'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Hongos, levaduras y mohos'),
+            ),
+        )
+    )
+    def saboruraud(self):
+        self.declare(Recomendacion('Agar Sabouraud'))
+
+    @Rule(
+        AND(
+            Medio('Caldo'),
+            OR(
+                Aislamiento('Bacterias con enzima tetrationato reductasa'),
+            ),
+        )
+    )
+    def tetrationato(self):
+        self.declare(Recomendacion('Caldo tetrationato'))
+
+    @Rule(
+        AND(
+            Medio('Caldo'),
+            OR(
+                Aislamiento('Salmonella'),
+            ),
+            Salmonella('Diferentes especies de salmonella'),
+        )
+    )
+    def selenito(self):
+        self.declare(Recomendacion('Caldo selenito'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Escherichia Coli'),
+            ),
+        )
+    )
+    def emb(self):
+        self.declare(Recomendacion('Agar EMB'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                AND(
+                    Aislamiento('Salmonella'),
+                    Salmonella('Aguas contaminadas'),
+                ),
+                Aislamiento('Shigella'),
+            ),
+        )
+    )
+    def ss(self):
+        self.declare(Recomendacion('Agar SS'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Staphylococus Aureus'),
+            ),
+        )
+    )
+    def vogel_johnson(self):
+        self.declare(Recomendacion('Agar Vogel-Johnson'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Staphylococus Aureus'),
+            ),
+        )
+    )
+    def manitol_sal(self):
+        self.declare(Recomendacion('Agar Manitol Sal'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Legionella y Nocardia'),
+            ),
+        )
+    )
+    def bcye(self):
+        self.declare(Recomendacion('Agar BCYE'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Hongos Patógenos'),
+            ),
+        )
+    )
+    def bhi(self):
+        self.declare(Recomendacion('Agar BHI'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                Aislamiento('Staphylococus Aureus'),
+                Aislamiento('Bacterias con Coagulaza'),
+            ),
+        )
+    )
+    def baird_parker(self):
+        self.declare(Recomendacion('Agar Baird-Parker'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                AND(
+                    Aislamiento('Salmonella'),
+                    Salmonella('Diferentes especies de salmonella')
+                ),
+            ),
+        )
+    )
+    def verde_brillante(self):
+        self.declare(Recomendacion('Agar Verde Brillante'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                PruebaDiferencial('Capacidad hemolítica de patógenos')
+            ),
+        )
+    )
+    def sangre(self):
+        self.declare(Recomendacion('Agar sangre'))
+
+    @Rule(
+        AND(
+            Medio('Caldo'),
+            OR(
+                PruebaDiferencial('Detección de materia fecal en alimento'),
+            ),
+        )
+    )
+    def ec(self):
+        self.declare(Recomendacion('Caldo EC'))
+
+    @Rule(
+        AND(
+            Medio('Agar'),
+            OR(
+                PruebaDiferencial('Detección de Vibrio'),
+            ),
+        )
+    )
+    def tcbs(self):
+        self.declare(Recomendacion('Agar TCBS'))
+
+    @Rule(
+        AND(
+            OR(
+                PruebaDiferencial('Determinación de degradación de azúcar'),
+            ),
+        )
+    )
+    def tsi(self):
+        self.declare(Recomendacion('Medio TSI'))
+
+    @Rule(
+        AND(
+            OR(
+                PruebaDiferencial('Capacidad de uso de citratos como fuente de carbono'),
+            ),
+        )
+    )
+    def simmons(self):
+        self.declare(Recomendacion('Citrato de Simmons'))
+
+    @Rule(
+        AND(
+            Medio('Caldo'),
+            OR(
+                PruebaDiferencial('Capacidad de degradar la urea'),
+            ),
+        )
+    )
+    def urea(self):
+        self.declare(Recomendacion('Caldo urea'))
+
+    
+    @Rule(
+        AND(
+            OR(
+                PruebaDiferencial('Capacidad de la producción de indol'),
+            ),
+        )
+    )
+    def sim(self):
+        self.declare(Recomendacion('Medio SIM'))
 
     # ======================================
     # Resultado
@@ -139,13 +344,12 @@ class RecomendadorAgares(KnowledgeEngine):
                 AND(
                     Procedimiento('Aislamiento'),
                     Preguntado(Medio),
-                    Preguntado(Inhibe),
-                    Preguntado(Aisla),
-                    Preguntado(Enfermedad),
+                    Preguntado(Aislamiento),
                 ),
                 AND(
                     Procedimiento('Prueba diferencial'),
                     Preguntado(Medio),
+                    Preguntado(PruebaDiferencial),
                 )
             )
         ),
@@ -154,6 +358,9 @@ class RecomendadorAgares(KnowledgeEngine):
     def recomendamos(self, recomendacion):
         print('======================================')
         print(f'\nRecomendamos {recomendacion}')
+        desc = Recomendacion.descriptions[recomendacion]
+        if desc:
+            print(f'\n{desc}')
 
     # No hay recomendaciones y ya preguntamos
     @Rule(
