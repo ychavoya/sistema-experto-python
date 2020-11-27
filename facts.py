@@ -12,7 +12,7 @@ class Aislamiento(Fact):
         'Staphylococus Aureus',
         'Legionella y Nocardia',
         'Hongos Patógenos',
-        'Bacterias con Coagulaza',
+        'Bacterias con Coagulasa',
         'Bacterias con enzima tetrationato reductasa',
     ]
 

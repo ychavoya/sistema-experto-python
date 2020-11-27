@@ -97,6 +97,7 @@ class RecomendadorAgares(KnowledgeEngine):
             Procedimiento('Aislamiento'),
             Aislamiento('Salmonella'),
             NOT(Preguntado(Salmonella)),
+            NOT(Recomendacion()),
         )
     )
     def preguntar_salmonella(self):
@@ -237,7 +238,7 @@ class RecomendadorAgares(KnowledgeEngine):
             Medio('Agar'),
             OR(
                 Aislamiento('Staphylococus Aureus'),
-                Aislamiento('Bacterias con Coagulaza'),
+                Aislamiento('Bacterias con Coagulasa'),
             ),
         )
     )
