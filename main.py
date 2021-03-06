@@ -1,10 +1,11 @@
-from recomendador import RecomendadorAgares
+"""
+Sistema experto
+"""
+import cli
 
 
 def main():
-    engine = RecomendadorAgares()
-    engine.reset()
-    engine.run()
+    cli.menu()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 # sistema-experto-python
-Sistema experto para determinar el medio adecuado para estudiar microorganismos
+Sistema experto en Python
 
 ## Instalación
 
