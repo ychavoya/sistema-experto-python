@@ -1,5 +1,6 @@
 from typing import List
 from experto_general.entry import Entry
+from io import open
 import json
 
 
@@ -25,7 +26,7 @@ class BaseConocimientos:
         :param filename: El nombre del archivo
         :return: La instancia de la base de conocimiento (self)
         """
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf8') as f:
             data = f.read()
 
         obj = json.loads(data)
@@ -68,4 +69,3 @@ class BaseConocimientos:
         for entry in self.entries:
             res += f"\n{entry}\n"
         return res
-
