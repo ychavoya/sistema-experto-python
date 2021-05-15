@@ -22,7 +22,11 @@ def _1_insertar():
 
 
 def _2_consultar():
-    print("Próximamente")
+    entry = engine.start()
+    if entry is None:
+        print("No se encontró ninguna entrada que coincida con las propiedades ingresadas")
+    else:
+        print(f"El resultado de la consulta es: {entry}")
 
 
 def _3_ver():
@@ -30,7 +34,9 @@ def _3_ver():
 
 
 def _4_guardar():
-    print("Próximamente")
+    entrada = input("Nombre de archivo: ")
+    engine.base.to_json(entrada.strip())
+    print("Guardado con éxito")
 
 
 def _5_cargar():
