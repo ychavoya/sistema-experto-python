@@ -44,6 +44,32 @@ class BaseConocimientos:
 
         return self
 
+    def to_json(self, filename: str):
+        """
+        Guarda la base de conocimientos a un archivo .json
+
+        :param filename: El nombre del archivo
+        :return: Cadena de los datos guardados en JSON
+        """
+        obj = {}
+        obj['__v'] = JSON_LATEST
+        obj['description'] = self.description
+        obj['entries'] = []
+
+        for entry in self.entries:
+            json_entry = {}
+            json_entry['name'] = entry.name
+            json_entry['description'] = entry.description
+            json_entry['props'] = []
+            for property in entry.properties:
+                json_entry['props'].append(property.name)
+            obj['entries'].append(json_entry)
+        
+        data = json.dumps(obj)
+        with open(filename, 'w', encoding='utf8') as f:
+            f.write(data)
+        return data
+
     def get_or_add_entry(self, name: str):
         """
         Obtiene una entrada de la base de conocimiento, o la agrega si no existe
