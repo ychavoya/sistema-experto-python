@@ -5,6 +5,26 @@ from experto_general.property import Property
 from experto_general.response import Response
 
 
+# Método temporal para usar sólo con CLI
+def _get_user_response(prop: Property) -> Response:
+    """
+    Obtener confirmación del usuario si cierta propiedad debe ser considerada
+
+    :param prop: Propiedad a preguntar
+    :return: Respuesta de confirmación o rechazo
+    """
+    prompt_str = "¿Es/Tiene " + prop.name + "? (s/n): "
+    response = input(prompt_str).strip().lower()
+
+    while response != 's' and response != 'n':
+        prompt_str = "Ingrese una respuesta válida (s/n): "
+        response = input(prompt_str).strip().lower()
+
+    if response == 's':
+        return Response.YES
+    return Response.NO
+
+
 class Engine:
     """
     Motor de inferencia
@@ -17,8 +37,8 @@ class Engine:
         self.base = BaseConocimientos()
         self.accepted_properties: List[Property] = []
         self.denied_properties: List[Property] = []
-    
-    def start(self) -> Entry:
+
+    def start(self) -> Entry or None:
         """
         Obtener una entrada en base a propiedades que ingrese el usuario
 
@@ -37,32 +57,32 @@ class Engine:
             if self._check_rule_3(entry) is False:
                 continue
 
-            for property in entry.properties:
-                if self._check_rule_1(property) is False:
+            for prop in entry.properties:
+                if self._check_rule_1(prop) is False:
                     continue
-                
-                response = self._get_user_response(property)
+
+                response = _get_user_response(prop)
                 if response == Response.YES:
-                    self.accepted_properties.append(property)
+                    self.accepted_properties.append(prop)
                 else:
-                    self.denied_properties.append(property)
+                    self.denied_properties.append(prop)
                     correct_entry = False
                     break
-            
+
             if correct_entry is True:
                 return entry
 
         return None
 
-    def _check_rule_1(self, property: Property) -> bool:
+    def _check_rule_1(self, prop: Property) -> bool:
         """
         Verificar 1ra regla. Que una propiedad no haya sido preguntada anteriormente
 
-        :param property:
+        :param prop:
         :return: Verdadero si se cumple la regla
         """        
-        return (property not in self.accepted_properties and 
-                property not in self.denied_properties)
+        return (prop not in self.accepted_properties and
+                prop not in self.denied_properties)
 
     def _check_rule_2(self, entry: Entry) -> bool:
         """
@@ -71,8 +91,8 @@ class Engine:
         :param entry:
         :return: Verdadero si se cumple la regla
         """
-        for property in self.accepted_properties:
-            if property not in entry.properties:
+        for prop in self.accepted_properties:
+            if prop not in entry.properties:
                 return False
         return True
 
@@ -83,26 +103,7 @@ class Engine:
         :param entry:
         :return: Verdadero si se cumple la regla
         """
-        for property in self.denied_properties:
-            if property in entry.properties:
+        for prop in self.denied_properties:
+            if prop in entry.properties:
                 return False
         return True
-
-    # Método temporal para usar sólo con CLI
-    def _get_user_response(self, property: Property) -> Response:
-        """
-        Obtener confirmación del usuario si cierta propiedad debe ser considerada
-
-        :param property: Propiedad a preguntar
-        :return: Respuesta de confirmación o rechazo
-        """
-        prompt_str = "¿Es/Tiene " + property.name + "? (s/n): "
-        response = input(prompt_str).strip().lower()
-
-        while response != 's' and response != 'n':
-            prompt_str = "Ingrese una respuesta válida (s/n): "
-            response = input(prompt_str).strip().lower()
-        
-        if response == 's':
-            return Response.YES
-        return Response.NO
