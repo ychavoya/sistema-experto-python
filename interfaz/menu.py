@@ -1,7 +1,7 @@
 import tkinter as tk
-import acciones
 import interfaz.insertarbase as insertar_base
 import interfaz.guardarbase as guardar_base
+import interfaz.consultarbase as consultar_base
 
 
 class Interfaz(tk.Frame):
@@ -21,7 +21,7 @@ class Interfaz(tk.Frame):
         self.txt_insertar = tk.Button(self, text="Insertar/Visualizar", width=50, command=insertar_base.InsertarBase)
         self.txt_insertar.pack(side="top", padx=5, pady=5)
 
-        self.txt_consultar = tk.Button(self, text="Consultar", width=50, command=acciones.consultar())
+        self.txt_consultar = tk.Button(self, text="Consultar", width=50, command=consultar_base.ConsultarBase)
         self.txt_consultar.pack(side="top", padx=5, pady=5)
 
         self.txt_guardar = tk.Button(self, text="Cargar/Guardar", width=50, command=guardar_base.GuardarBase)

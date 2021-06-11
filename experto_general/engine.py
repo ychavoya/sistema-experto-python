@@ -37,6 +37,8 @@ class Engine:
         self.base = BaseConocimientos()
         self.accepted_properties: List[Property] = []
         self.denied_properties: List[Property] = []
+        self.response: Response = Response.NO
+        self.result: Entry or None = None
 
     def start(self) -> Entry or None:
         """
@@ -73,6 +75,53 @@ class Engine:
                 return entry
 
         return None
+
+    def generate(self):
+        """
+        Genera una lista de propiedades a preguntar, esperando una iteración del
+        generador para continuar.
+
+        Entre propiedades, se recibe la propiedad response del objeto como respuesta a
+        la pregunta de la propiedad, y al finalizar el resultado se almacena en result
+        """
+        self.accepted_properties: List[Property] = []
+        self.denied_properties: List[Property] = []
+
+        for entry in self.base.entries:
+
+            correct_entry = True
+
+            if self._check_rule_2(entry) is False:
+                continue
+
+            if self._check_rule_3(entry) is False:
+                continue
+
+            for prop in entry.properties:
+                if self._check_rule_1(prop) is False:
+                    continue
+
+                yield prop
+
+                if self.response == Response.YES:
+                    self.accepted_properties.append(prop)
+                else:
+                    self.denied_properties.append(prop)
+                    correct_entry = False
+                    break
+
+            if correct_entry is True:
+                self.result = entry
+                yield None
+
+        self.result = None
+        yield None
+
+    def set_response(self, response: Response):
+        self.response = response
+
+    def get_result(self) -> Entry or None:
+        return self.result
 
     def _check_rule_1(self, prop: Property) -> bool:
         """
