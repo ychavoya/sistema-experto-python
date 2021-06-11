@@ -18,14 +18,6 @@ def insertar(nombre, prop):
         messagebox.showinfo(message="No se admiten valores vacíos", title="Aviso")
 
 
-def consultar():
-    entry = engine.start()
-    if entry is None:
-        print("No se encontró ninguna entrada que coincida con las propiedades ingresadas")
-    else:
-        print(f"El resultado de la consulta es: {entry}")
-
-
 def get_base_entries():
     return engine.base.entries
 
