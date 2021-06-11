@@ -10,7 +10,7 @@ class ConsultarBase(tk.Frame):
         self.master = tk.Toplevel()
         super().__init__(self.master)
 
-        self.master.geometry('380x200')
+        self.master.geometry('380x120')
         self.master.title('Consultar al sistema')
         self.master.resizable(width=False, height=False)
 
