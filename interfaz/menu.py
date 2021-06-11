@@ -1,7 +1,7 @@
 import tkinter as tk
 import acciones
 import interfaz.insertarbase as insertar_base
-import interfaz.guardar_base as guardar_base
+import interfaz.guardarbase as guardar_base
 
 
 class Interfaz(tk.Frame):
@@ -18,13 +18,13 @@ class Interfaz(tk.Frame):
         self.lbl_base.pack(side="top")
         self.lbl_base.config(font=("Helvetica", 24))
 
-        self.txt_insertar = tk.Button(self, text="Insertar", width=50, command=insertar_base.InsertarBase)
+        self.txt_insertar = tk.Button(self, text="Insertar/Visualizar", width=50, command=insertar_base.InsertarBase)
         self.txt_insertar.pack(side="top", padx=5, pady=5)
 
         self.txt_consultar = tk.Button(self, text="Consultar", width=50, command=acciones.consultar())
         self.txt_consultar.pack(side="top", padx=5, pady=5)
 
-        self.txt_guardar = tk.Button(self, text="Cargar/Guardar", width=50, command=guardar_base.Guardar_base)
+        self.txt_guardar = tk.Button(self, text="Cargar/Guardar", width=50, command=guardar_base.GuardarBase)
         self.txt_guardar.pack(side="top", padx=5, pady=5)
 
         self.quit = tk.Button(self, text="QUIT", width=50, fg="red", command=self.master.destroy)

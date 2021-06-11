@@ -9,10 +9,8 @@ engine = Engine()
 
 
 def insertar(nombre, prop):
-    # entrada = input("Nombre de la entrada: ")
     if nombre and prop:
         entry = engine.base.get_or_add_entry(nombre)
-        # print("Escriba las propiedades de la entrada, una por línea. Deje una línea vacía para terminar")
         entry.get_or_add_prop(prop)
         print(f"Entrada agregada: {entry}")
     else:
