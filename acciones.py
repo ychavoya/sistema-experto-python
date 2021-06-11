@@ -8,16 +8,14 @@ from tkinter import messagebox
 engine = Engine()
 
 
-def insertar(nombre,prop):
-    #entrada = input("Nombre de la entrada: ")
+def insertar(nombre, prop):
     if nombre and prop:
         entry = engine.base.get_or_add_entry(nombre)
-        #print("Escriba las propiedades de la entrada, una por línea. Deje una línea vacía para terminar")
         entry.get_or_add_prop(prop)
         print(f"Entrada agregada: {entry}")
     else:
-        print("No se admiten vacios")
-        messagebox.showinfo(message="No se admiten valores vacios", title="Aviso")
+        print("No se admiten vacíos")
+        messagebox.showinfo(message="No se admiten valores vacíos", title="Aviso")
 
 
 def consultar():
@@ -29,30 +27,24 @@ def consultar():
 
 
 def get_base_entries():
-    
-        
     return engine.base.entries
-    #print(engine.base.entries)
-
 
 
 def guardar(entrada):
     if entrada:
         engine.base.to_json(entrada.strip())
-        messagebox.showinfo(message="El archivo fue guardado con exito", title="Guardado")
+        messagebox.showinfo(message="El archivo fue guardado con éxito", title="Guardado")
     else:
-        messagebox.showinfo(message="Elije un nombre para el archivo", title="Guardado")
+        messagebox.showinfo(message="Elige un nombre para el archivo", title="Guardado")
 
 
 def cargar(entrada):
     if entrada:
         try:
             engine.base.from_json(entrada.strip())
-            messagebox.showinfo(message="El archivo fue cargado con exito", title="Cargado")
-        except KeyError as e:
+            messagebox.showinfo(message="El archivo fue cargado con éxito", title="Cargado")
+        except KeyError:
             messagebox.showinfo(message="Archivo inválido o con formato incorrecto", title="Cargado")
-            
+
     else:
-        messagebox.showinfo(message="Elije un nombre del archivo a cargar", title="Guardado")
-
-
+        messagebox.showinfo(message="Elige un nombre del archivo a cargar", title="Guardado")

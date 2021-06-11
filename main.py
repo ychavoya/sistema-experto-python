@@ -1,7 +1,6 @@
 """
 Sistema experto
 """
-import main
 import interfaz.menu as menu
 
 

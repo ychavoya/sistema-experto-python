@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Response(Enum):
     """
     Enum de respuesta del usuario
