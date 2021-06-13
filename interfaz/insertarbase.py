@@ -19,6 +19,7 @@ class InsertarBase(tk.Frame):
 
         self.entradas = ttk.Treeview(self)
         self.entradas.pack(side="top")
+        self.entradas.tag_bind("tag_select", "<<TreeviewSelect>>", self.item_selected)
         self.fill_base_tree_view()
 
         self.lbl_entry = tk.Label(self, text="Nombre de la entrada:")
@@ -44,7 +45,7 @@ class InsertarBase(tk.Frame):
         base = self.entradas.insert("", tk.END, text="Base")
         base_entries = acciones.get_base_entries()
         for entry in base_entries:
-            nombre = self.entradas.insert(base, tk.END, text=entry.name)
+            nombre = self.entradas.insert(base, tk.END, text=entry.name, tags=("tag_select",))
             for prop in entry.properties:
                 self.entradas.insert(nombre, tk.END, text=prop.name)
 
@@ -55,3 +56,9 @@ class InsertarBase(tk.Frame):
         acciones.insertar(entrada, propiedad)
         self.txt_prop.delete(0, "end")
         self.fill_base_tree_view()
+
+    def item_selected(self, event):
+        id = event.widget.focus()
+        text = self.entradas.item(id)["text"]
+        self.txt_entry.delete(0, tk.END)
+        self.txt_entry.insert(0, text)
