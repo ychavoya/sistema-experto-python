@@ -7,7 +7,7 @@ class GuardarBase(tk.Frame):
     def __init__(self):
         root = tk.Toplevel()
         super().__init__(root)
-        root.geometry('400x200')
+        root.geometry('400x220')
         root.title('Guardar Base de Conocimientos')
         root.resizable(width=False, height=False)
         self.master = root
@@ -17,7 +17,7 @@ class GuardarBase(tk.Frame):
         self.lbl_base.pack(side="top")
         self.lbl_base.config(font=("Helvetica", 24))
 
-        self.lbl_file = tk.Label(self, text="Nombre de el archivo:")
+        self.lbl_file = tk.Label(self, text="Nombre del archivo:")
         self.lbl_file.config(font=("Helvetica", 12))
         self.lbl_file.pack(side="top")
         self.txt_file = tk.Entry(self, width=50)
