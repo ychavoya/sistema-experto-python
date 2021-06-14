@@ -9,12 +9,12 @@ class Interfaz(tk.Frame):
         root = tk.Tk()
         super().__init__(root)
         root.geometry('400x200')
-        root.title('Sistema experto chidori')
+        root.title('SE para selección de agares')
         root.resizable(width=False, height=False)
         self.master = root
         self.pack()
 
-        self.lbl_base = tk.Label(self, text="Sistema Experto python 7u7")
+        self.lbl_base = tk.Label(self, text="Sistema Experto Agares")
         self.lbl_base.pack(side="top")
         self.lbl_base.config(font=("Helvetica", 24))
 
